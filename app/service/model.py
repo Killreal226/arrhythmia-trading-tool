@@ -20,6 +20,5 @@ class Transactions(Base):
 
 
 async def create_tables() -> None:
-    """Функция создания всез таблиц по моделям, если таких нет"""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
