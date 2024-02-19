@@ -2,3 +2,6 @@ venv
 tests
 __pycache__
 config.env
+logs.log
+data_tickers.json
+main.py
