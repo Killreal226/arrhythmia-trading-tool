@@ -38,7 +38,8 @@ class ConnectorOrderBook(BasicConnector):
                 self._request_iterator(instruments_to_subscribe)
             ):
                 try:
-                    self._update_queue(marketdata)
+                    self._update_data_order_book(marketdata)
+                    self._update_queue()
                 except Exception as ex:
                     logger.info(f"Error in stream orderbook {ex}")
 
@@ -60,9 +61,16 @@ class ConnectorOrderBook(BasicConnector):
         while not self._stop_event.is_set():
             time.sleep(1)
 
-    def _update_queue(self, marketdata: MarketDataResponse) -> None:
-        self._update_data_order_book(marketdata)
+    def _update_data_order_book(self, marketdata: MarketDataResponse) -> None:
+        figi = marketdata.orderbook.figi
+        bids = marketdata.orderbook.bids
+        for i, bid in enumerate(bids):
+            price = quotation_to_float(bid.price)
+            volume = bid.quantity
+            bids[i] = {"price": price, "volume": volume}
+        self._data_order_book[figi] = bids
 
+    def _update_queue(self) -> None:
         try:
             current_data_in_queue = self._queue.get_nowait()
         except queue.Empty:
@@ -73,15 +81,6 @@ class ConnectorOrderBook(BasicConnector):
             self._queue.put(current_data_in_queue)
         else:
             self._queue.put(self._data_order_book)
-
-    def _update_data_order_book(self, marketdata: MarketDataResponse) -> None:
-        figi = marketdata.orderbook.figi
-        bids = marketdata.orderbook.bids
-        for i, bid in enumerate(bids):
-            price = quotation_to_float(bid.price)
-            volume = bid.quantity
-            bids[i] = {"price": price, "volume": volume}
-        self._data_order_book[figi] = bids
 
 
 class ConnectorTrades(BasicConnector):
