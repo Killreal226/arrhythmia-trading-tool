@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, Integer, String
+from sqlalchemy import Column, DateTime, Float, Integer, String
 
 from app.database import Base, engine
 
@@ -9,14 +9,11 @@ class Transactions(Base):
     id = Column(Integer, primary_key=True)
     figi = Column(String(16))
     ticker = Column(String(8))
-    # order_time =
+    order_time = Column(DateTime, nullable=False)
     price = Column(Float(8))
-    quantity = Column(Integer)
+    volume = Column(Integer)
     direction = Column(String(4))
     account_id = Column(String(16))
-    order_id = Column(String(16))
-    order_type = Column(String(8))
-    fee = Column(Float(8))
 
 
 async def create_tables() -> None:
