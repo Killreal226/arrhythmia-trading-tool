@@ -26,7 +26,7 @@ class BasicConnector:
 
 
 class ConnectorOrderBook(BasicConnector):
-    _data_order_book = {}
+    _data_order_book : dict[str, list[dict]] = {}
 
     def run(self) -> None:
         self._listen_order_book()

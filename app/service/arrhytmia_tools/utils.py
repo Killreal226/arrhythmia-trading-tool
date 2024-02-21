@@ -29,7 +29,7 @@ class PreparingInstruments:
             tasks.append(task)
         min_steps_prices = await asyncio.gather(*tasks)
         return min_steps_prices
-
+    
     async def _get_min_step_price(self, figi: str) -> float:
         async with AsyncClient(self._api_token) as client:
             response = await client.instruments.share_by(id_type=InstrumentIdType.INSTRUMENT_ID_TYPE_FIGI, id=figi)

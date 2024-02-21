@@ -25,14 +25,18 @@ class ArrhytmiaService:
     def run(self):
         while not self._stop_event.is_set():
             self._update_state_instruments_by_trades()
-            self._get_tasks_by_data_order_book()
-            results_async_tasks = asyncio.run(self._async_tasks)
-            self._update_state_instruments_by_results(results_async_tasks)
+            self._create_tasks_by_data_order_book()
 
-    def _get_tasks_by_data_order_book(self) -> None:
+            asyncio.run(self._async_tasks)
+
+            self._state_instruments = self._events.state_instruments
+            self._events.state_instruments = {}
+
+    def _create_tasks_by_data_order_book(self) -> None:
         data_order_book = self._queue_order_book.get()
         for figi in data_order_book:
             async_task = self._events.get_task_by_event(data_order_book[figi], self._state_instruments[figi])
+            
             if async_task:
                 self._async_tasks.append(async_task)
 
@@ -60,6 +64,3 @@ class ArrhytmiaService:
             account_id=self._account_id,
         )
         self._async_tasks.append(async_task)
-
-    def _update_state_instruments_by_results(self, results_async_tasks: list):
-        pass

@@ -11,6 +11,7 @@ class Config(BaseSettings):
     ID_ACCOUNT: str  # id моего аккаунта из запроса client.users.get_accounts()
 
     DEPTH_ORDER_BOOK: int
+    # MAX_ALLOWED_TIME_IN_MINUTS: int
 
     DB_HOST: str  # localhost или IP сервера
     DB_PORT: int  # Порт 3306 по дефолту
@@ -34,4 +35,4 @@ class Config(BaseSettings):
 config = Config()
 config.load_data_tickers()
 
-logger.add(config.LOG_FILE, rotation="1024 MB", level="INFO")
+# logger.add(config.LOG_FILE, rotation="1024 MB", level="INFO")
